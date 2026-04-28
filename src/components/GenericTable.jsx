@@ -6,7 +6,7 @@ import './GenericTable.css'; // ייבוא של קובץ העיצוב
 const GenericTable = ({ columns, data, onUpdateRow }) => {
     // הגנת קצה: אם אין נתונים בכלל, נציג הודעה במקום טבלה ריקה
     if (!data || data.length === 0) {
-        return <div className="no-data">אין נתונים להצגה בטבלה</div>;
+        return <div className="no-data">No data to show. Generate a new Playlist </div>;
     }
 
     return (

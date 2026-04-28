@@ -1,14 +1,13 @@
-/* מעטפת הטבלה */
+/* המעטפת של הטבלה בלבד */
 .table-container {
     width: 100%;
-    overflow-x: auto; /* מאפשר גלילה ימינה-שמאלה אם הטבלה רחבה מדי */
+    overflow-x: auto; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin-top: 20px;
-    direction: ltr; /* סידור סימני פיסוק */
+    direction: ltr; 
 }
 
-/* הטבלה עצמה */
 .generic-table {
     width: 100%;
     border-collapse: collapse;
@@ -16,7 +15,6 @@
     background-color: #ffffff;
 }
 
-/* עיצוב כותרות הטבלה */
 .generic-table th {
     background-color: #f4f4f4;
     color: #333;
@@ -26,19 +24,16 @@
     border-bottom: 2px solid #ddd;
 }
 
-/* עיצוב תאים בשורות */
 .generic-table td {
     padding: 12px 15px;
     border-bottom: 1px solid #ddd;
     color: #555;
 }
 
-/* אפקט ריחוף על שורה (Hover) - מוסיף המון ל-UX */
 .generic-table tbody tr:hover {
     background-color: #f9f9f9;
 }
 
-/* עיצוב למצב של חוסר נתונים */
 .no-data {
     text-align: center;
     padding: 20px;
@@ -46,30 +41,4 @@
     color: #777;
     background-color: #f9f9f9;
     border-radius: 8px;
-}
-
-/* אפקט רמז לתא שניתן לעריכה (Hover) */
-.editable-cell {
-    cursor: text;
-    transition: background-color 0.2s ease, outline 0.2s ease;
-}
-
-.editable-cell:hover {
-    background-color: #f0f8ff; /* צבע תכלת ממש עדין */
-    outline: 1px dashed #a0c4ff; /* מסגרת מקווקות שנותנת תחושה של עריכה */
-    border-radius: 4px;
-}
-
-/* עיצוב לשדות ההקלדה והרשימה הנפתחת שצצים */
-.edit-input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 8px;
-    border: 2px solid #aa3bff; /* צבע מהעיצוב הקודם */
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: inherit;
-    outline: none;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }

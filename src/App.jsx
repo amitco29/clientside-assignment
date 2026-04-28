@@ -1,18 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import GenericTable from './components/GenericTable';
 import ColumnFilter from './components/ColumnFilter';
-import PlaylistGenerator from './components/PlaylistGenerator'; // ייבוא המחולל החדש
+import PlaylistGenerator from './components/PlaylistGenerator';
 import { tableColumns, generatePlaylistData } from './data/mockData';
 import './App.css';
 
 function App() {
   const [playlistData, setPlaylistData] = useState([]);
-  
-  // --- חדש (סעיף 2): שמירת "תמונת המצב" של הנתונים כפי שהם ב-LocalStorage ---
   const [savedSnapshot, setSavedSnapshot] = useState('');
   
-  // המתג עכשיו מחושב אוטומטית! אין צורך ב-setHasUnsavedChanges
-  // אנחנו פשוט משווים את הנתונים הנוכחיים לתמונת המצב השמורה
   const hasUnsavedChanges = useMemo(() => {
     if (!savedSnapshot || playlistData.length === 0) return false;
     return JSON.stringify(playlistData) !== savedSnapshot;
@@ -21,39 +17,34 @@ function App() {
   const [visibleColumnIds, setVisibleColumnIds] = useState(tableColumns.map(col => col.id));
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // טעינה ראשונית
+  // --- שינוי: טעינה ראשונית - ללא ייצור נתונים אוטומטי ---
   useEffect(() => {
     const savedData = localStorage.getItem('myPlaylist');
     if (savedData) {
       setPlaylistData(JSON.parse(savedData));
-      setSavedSnapshot(savedData); // שומרים את תמונת המצב
+      setSavedSnapshot(savedData);
     } else {
-      const initialData = generatePlaylistData(20);
-      setPlaylistData(initialData);
-      const initialString = JSON.stringify(initialData);
-      localStorage.setItem('myPlaylist', initialString);
-      setSavedSnapshot(initialString); // שומרים את תמונת המצב
+      // עולה ריק! רק מגדירים את הסנאפשוט כמערך ריק כדי למנוע באגים
+      setPlaylistData([]);
+      setSavedSnapshot('[]');
     }
   }, []);
 
-  // פונקציית שמירה ל-LocalStorage
   const handleSaveChanges = () => {
     const stringifiedData = JSON.stringify(playlistData);
     localStorage.setItem('myPlaylist', stringifiedData);
-    setSavedSnapshot(stringifiedData); // מעדכנים את תמונת המצב כך שהמתג יחזור ל-IDLE
+    setSavedSnapshot(stringifiedData);
   };
 
-  // --- חדש (סעיף 3): פונקציה לייצור פלייליסט חדש לחלוטין ---
   const handleGenerateNewPlaylist = (count) => {
-    const newData = generatePlaylistData(count);
+    // אם ביקשו 0, נייצר מערך ריק במקום לקרוא לפונקציה
+    const newData = count === 0 ? [] : generatePlaylistData(count);
     const stringifiedNewData = JSON.stringify(newData);
     
-    // דורסים הכל!
     setPlaylistData(newData);
     localStorage.setItem('myPlaylist', stringifiedNewData);
     setSavedSnapshot(stringifiedNewData);
     
-    // מציגים רמז למשתמש מחדש כי זו טבלה חדשה
     setIsInitialLoad(true); 
   };
 
@@ -80,23 +71,30 @@ function App() {
       <header>
         <h1>Amit's Playlist 🎵</h1>
         
-        {/* המחולל החדש שיושב בדיוק פה */}
-        <PlaylistGenerator onGenerate={handleGenerateNewPlaylist} />
+        {/* --- שינוי: העברנו לקומפוננטה את הכמות הנוכחית של השירים --- */}
+        <PlaylistGenerator 
+            onGenerate={handleGenerateNewPlaylist} 
+            currentCount={playlistData.length} 
+        />
 
-        {isInitialLoad && !hasUnsavedChanges && (
+        {/* --- שינוי: הטיפ יופיע רק אם יש לפחות שיר אחד בטבלה --- */}
+        {isInitialLoad && !hasUnsavedChanges && playlistData.length > 0 && (
           <p className="main-initial-tip">💡 Double-click any field below to modify your playlist</p>
         )}
       </header>
-      
-      <main>
-        <ColumnFilter 
-          columns={tableColumns} 
-          visibleColumnIds={visibleColumnIds} 
-          onToggleColumn={handleToggleColumn}
-          hasUnsavedChanges={hasUnsavedChanges}
-          onSave={handleSaveChanges}
-        />
+        <main>
+        {/* --- הוספנו את התנאי: נרנדר את הסרגל *אך ורק* אם יש שירים בפלייליסט --- */}
+        {playlistData.length > 0 && (
+          <ColumnFilter 
+            columns={tableColumns} 
+            visibleColumnIds={visibleColumnIds} 
+            onToggleColumn={handleToggleColumn}
+            hasUnsavedChanges={hasUnsavedChanges}
+            onSave={handleSaveChanges}
+          />
+        )}
 
+        {/* הטבלה תמיד מרונדרת, כי היא יודעת להציג את הודעת ה"אין נתונים" בעצמה */}
         <GenericTable 
           columns={columnsToDisplay} 
           data={playlistData} 

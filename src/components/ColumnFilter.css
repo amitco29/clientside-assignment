@@ -4,11 +4,12 @@
     border-radius: 10px;
     margin-bottom: 20px;
     display: flex;
-    justify-content: space-between; /* פיצול לצדדים */
+    justify-content: space-between;
     align-items: center;
     border: 1px solid #e2e8f0;
 }
 
+/* --- אזור הצ'קבוקסים (עמודות) --- */
 .filter-section {
     display: flex;
     align-items: center;
@@ -33,9 +34,17 @@
     font-size: 0.9rem;
     color: #64748b;
     cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-/* --- עיצוב ה-Toggle בתוך הסרגל --- */
+.checkbox-label:hover {
+    background-color: #e2e8f0; 
+    color: #1e293b; 
+}
+
+/* --- אזור ה-Toggle (שמירה) --- */
 .save-toggle-wrapper {
     display: flex;
     flex-direction: column;
@@ -50,17 +59,22 @@
     height: 24px;
 }
 
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-switch input { 
+    opacity: 0; 
+    width: 0; 
+    height: 0; 
+}
 
 .slider {
     position: absolute;
-    cursor: pointer;
     top: 0; left: 0; right: 0; bottom: 0;
     background-color: #1930ff; /* כחול OFF */
     transition: 0.4s;
     border-radius: 24px;
+    cursor: pointer; /* מראה יד כשאפשר ללחוץ */
 }
 
+/* ה"כפתור" הלבן שזז על המתג */
 .slider:before {
     position: absolute;
     content: "";
@@ -73,24 +87,37 @@
     border-radius: 50%;
 }
 
-input:checked + .slider { background-color: #5b8e39; } /* ירוק ON */
-input:checked + .slider:before { transform: translateX(22px); }
+/* מצב ON (שמור) */
+input:checked + .slider { 
+    background-color: #5b8e39; 
+}
 
+input:checked + .slider:before { 
+    transform: translateX(22px); 
+}
+
+/* כשהמתג נעול (אין שינויים), הסמן רגיל ויש שקיפות עדינה */
+input:disabled + .slider {
+    cursor: default;
+    opacity: 0.8; 
+}
+
+/* --- טקסט חיווי שמירה --- */
 .save-status-text {
     font-size: 0.7rem;
     font-weight: bold;
     letter-spacing: 0.3px;
 }
 
-/* הטקסט מהבהב כשצריך לשמור */
 .save-status-text.unsaved { 
-    color: #1930ff;; 
+    color: #1930ff; 
     animation: pulseText 1.5s infinite; 
 }
 
-.save-status-text.saved { color: #5b8e39; }
+.save-status-text.saved { 
+    color: #5b8e39; 
+}
 
-/* האנימציה של הטקסט המהבהב */
 @keyframes pulseText {
     0% { opacity: 1; }
     50% { opacity: 0.5; }

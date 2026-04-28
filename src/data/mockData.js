@@ -3,10 +3,10 @@ import { faker } from '@faker-js/faker';
 // 1. הגדרת העמודות של הטבלה
 // ה-id פה הוא קריטי: הוא המפתח שיחבר בין העמודה לבין המידע שנמצא בתוך השורות.
 export const tableColumns = [
-    { id: 'songName', ordinalNo: 0, title: 'Song Title', type: 'string', width: 250 },
+    { id: 'songName', ordinalNo: 0, title: 'Song Name', type: 'string', width: 250 },
     { id: 'artist', ordinalNo: 1, title: 'Artist', type: 'string', width: 200 },
     { id: 'genre', ordinalNo: 2, title: 'Genre', type: 'selection', width: 150 },
-    { id: 'duration', ordinalNo: 3, title: 'Duration (sec)', type: 'number', width: 120 },
+    { id: 'duration', ordinalNo: 3, title: 'Duration', type: 'number', width: 120 },
     { id: 'isFavorite', ordinalNo: 4, title: 'Favorite', type: 'boolean', width: 100 }
 ];
 

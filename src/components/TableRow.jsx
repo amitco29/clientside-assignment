@@ -1,41 +1,39 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { genreOptions } from '../data/mockData'; // ייבוא האפשרויות לרשימה הנפתחת
+import { genreOptions } from '../data/mockData';
+import './TableRow.css';
 
 const TableRow = ({ row, columns, onUpdateRow }) => {
-    // בכל פעם ששורה מתרנדרת, נדפיס ללוג כדי שנוכל לראות בעיניים
     console.log(`Rendering row: ${row.id}`);
 
-    // State לניהול מצב העריכה - זוכר איזה תא נערך כרגע ומה הערך הזמני שלו
     const [editingColumnId, setEditingColumnId] = useState(null);
     const [tempEditValue, setTempEditValue] = useState('');
 
-    // פתיחת מצב עריכה בדאבל-קליק
+    const formatDuration = (totalSeconds) => {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    };
+
     const handleDoubleClick = (columnId, currentValue) => {
         setEditingColumnId(columnId);
         setTempEditValue(currentValue);
     };
 
-    // שמירת הנתונים ויציאה ממצב עריכה
     const handleSave = (columnId) => {
         let finalValue = tempEditValue;
-        
-        // מוצאים את העמודה הנוכחית כדי לבדוק את ה-type שלה
         const columnDef = columns.find(c => c.id === columnId);
         
-        // אם זו עמודת מספר, נמיר את המחרוזת חזרה למספר אמיתי!
         if (columnDef && columnDef.type === 'number') {
             finalValue = Number(tempEditValue);
         }
 
-        // עכשיו ההשוואה תעבוד מושלם
         if (finalValue !== row[columnId]) {
             onUpdateRow(row.id, columnId, finalValue);
         }
         setEditingColumnId(null);
     };
 
-    // שמירה בעת לחיצה על Enter
     const handleKeyDown = (e, columnId) => {
         if (e.key === 'Enter') {
             handleSave(columnId);
@@ -47,29 +45,42 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
             {columns.map((column) => {
                 const cellValue = row[column.id];
                 const isEditing = editingColumnId === column.id;
+                
+                const isNonEditable = column.type === 'boolean' || column.id === 'duration';
+
                 let displayContent;
                 
-                // טיפול תצוגה מיוחד לשדה הבוליאני (הכוכב)
                 if (column.type === 'boolean') {
                     displayContent = (
                         <span 
-                            style={{ cursor: 'pointer', fontSize: '1.2rem' }} 
+                            className="favorite-star"
                             onClick={() => onUpdateRow(row.id, column.id, !cellValue)}
                         >
                             {cellValue ? '⭐' : '☆'}
                         </span>
                     );
                 } 
-                // אם התא כרגע במצב עריכה
+                else if (column.id === 'duration') {
+                    displayContent = formatDuration(cellValue);
+                }
                 else if (isEditing) {
                     if (column.id === 'genre') {
-                        // רשימה נפתחת עבור ז'אנר
+                        // --- השינוי שלנו כאן: שמירה וסגירה מיידית ---
                         displayContent = (
                             <select 
                                 autoFocus
                                 value={tempEditValue}
-                                onChange={(e) => setTempEditValue(e.target.value)}
-                                onBlur={() => handleSave(column.id)}
+                                onChange={(e) => {
+                                    const selectedValue = e.target.value;
+                                    // 1. בודקים אם יש שינוי, ואם כן שומרים ישירות
+                                    if (selectedValue !== row[column.id]) {
+                                        onUpdateRow(row.id, column.id, selectedValue);
+                                    }
+                                    // 2. סוגרים את מצב העריכה באותו רגע!
+                                    setEditingColumnId(null);
+                                }}
+                                // גיבוי: למקרה שהמשתמש פתח את הרשימה אבל לחץ בחוץ בלי לבחור כלום
+                                onBlur={() => setEditingColumnId(null)}
                                 className="edit-input"
                             >
                                 {genreOptions.map(option => (
@@ -78,7 +89,6 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
                             </select>
                         );
                     } else {
-                        // שדה קלט טקסטואלי או מספרי עבור שאר השדות
                         displayContent = (
                             <input 
                                 type={column.type === 'number' ? 'number' : 'text'}
@@ -92,7 +102,6 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
                         );
                     }
                 } 
-                // תצוגה רגילה עבור טקסט/מספר שאינם בעריכה
                 else {
                     displayContent = cellValue;
                 }
@@ -100,9 +109,9 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
                 return (
                     <td 
                         key={`${row.id}-${column.id}`}
-                        onDoubleClick={column.type !== 'boolean' ? () => handleDoubleClick(column.id, cellValue) : undefined}
-                        className={column.type !== 'boolean' ? "editable-cell" : ""}
-                        title={column.type !== 'boolean' ? "Double click to edit" : ""}
+                        onDoubleClick={!isNonEditable ? () => handleDoubleClick(column.id, cellValue) : undefined}
+                        className={!isNonEditable ? "editable-cell" : ""}
+                        title={!isNonEditable ? "Double click to edit" : ""}
                     >
                         {displayContent}
                     </td>
@@ -118,6 +127,4 @@ TableRow.propTypes = {
     onUpdateRow: PropTypes.func.isRequired
 };
 
-// אנחנו מייצאים את הקומפוננטה עטופה ב-memo
-// עכשיו השורה הזו תתרנדר מחדש *אך ורק* אם הנתונים של השיר הספציפי הזה השתנו
 export default React.memo(TableRow);

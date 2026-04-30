@@ -1,16 +1,17 @@
-/* אפקט רמז לתא שניתן לעריכה (Hover) */
+/* 1. התנהגות תאים הניתנים לעריכה (Editable Cells) */
 .editable-cell {
     cursor: text;
     transition: background-color 0.2s ease, outline 0.2s ease;
 }
 
+/* אפקט הארה ורמז ויזואלי לעריכה במעבר עכבר */
 .editable-cell:hover {
     background-color: #f0f8ff; 
     outline: 1px dashed #a0c4ff; 
     border-radius: 4px;
 }
 
-/* עיצוב לשדות ההקלדה והרשימה הנפתחת שצצים */
+/* 2. רכיבי קלט (Input Components) */
 .edit-input {
     width: 100%;
     box-sizing: border-box;
@@ -24,7 +25,7 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* כוכב המועדפים */
+/* 3. רכיב מועדפים (Favorite Star) */
 .favorite-star {
     cursor: pointer;
     font-size: 1.2rem;
@@ -36,22 +37,21 @@
     transform: scale(1.3); 
 }
 
-/* עוטף את האינפוט כדי שנוכל למקם את השגיאה מעליו */
+/* 4. שגיאות ולידציה (Validation Errors) */
 .input-wrapper {
     position: relative;
     width: 100%;
 }
 
-/* מסגרת אדומה לאינפוט כשיש שגיאה */
 .edit-input.error-border {
     border-color: #ef4444;
     background-color: #fef2f2;
 }
 
-/* הודעת השגיאה הקופצת */
+/* הודעת שגיאה קופצת (Tooltip Bubble) */
 .cell-error-msg {
     position: absolute;
-    bottom: 110%; /* ממקם את זה מעל האינפוט */
+    bottom: 110%; 
     left: 50%;
     transform: translateX(-50%);
     background-color: #ef4444;
@@ -66,7 +66,7 @@
     z-index: 10;
 }
 
-/* משולש קטן בתחתית ההודעה (כמו בועת דיבור) */
+/* החץ הקטן בתחתית הודעת השגיאה */
 .cell-error-msg::after {
     content: '';
     position: absolute;
@@ -78,6 +78,7 @@
     border-color: #ef4444 transparent transparent transparent;
 }
 
+/* 5. אנימציות (Keyframes) */
 @keyframes popIn {
     from { opacity: 0; transform: translate(-50%, 5px); }
     to { opacity: 1; transform: translate(-50%, 0); }

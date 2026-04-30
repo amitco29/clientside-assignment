@@ -3,18 +3,18 @@ import PropTypes from 'prop-types';
 import './TableRow.css';
 
 const TableRow = ({ row, columns, onUpdateRow }) => {
-    // --- הדפסה למעקב אחרי רינדורים (Performance Check) ---
-    // יעזור לך לוודא שרק השורה שנערכת מרונדרת מחדש, ולא כל הטבלה!
+    // הדפסה למעקב אחרי רינדורים (Performance Check). 
+    // מוכיח ששימוש ב-React.memo מונע רינדור מחדש של כל הטבלה בעת עריכת שורה בודדת.
     console.log(`[Render] TableRow: ${row.id}`);
     
+    // --- 1. ניהול מצב מקומי (Local State) ---
     const [editingColumnId, setEditingColumnId] = useState(null);
     const [tempEditValue, setTempEditValue] = useState('');
-    
-    // --- 1. סטייט חדש להודעת שגיאה מקומית ---
     const [errorMsg, setErrorMsg] = useState('');
 
+    // --- 2. טיפול באירועים (Event Handlers) ---
     const handleDoubleClick = (columnId, currentValue) => {
-        // מונע כניסה לעריכה אם אנחנו כרגע מציגים שגיאה
+        // חסימת כניסה למצב עריכה אם מוצגת כרגע הודעת שגיאה
         if (errorMsg) return; 
         
         setEditingColumnId(columnId);
@@ -25,23 +25,25 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
         let finalValue = tempEditValue;
         const columnDef = columns.find(c => c.id === columnId);
         
+        // המרת טיפוס נתונים למספר אם הוגדר כך בסכמה
         if (columnDef && columnDef.type === 'number') {
             finalValue = Number(tempEditValue);
         }
 
-        // --- 2. ולידציה לשדה ריק ---
+        // מנגנון ולידציה: מניעת שמירת שדה טקסט ריק
         if (typeof finalValue === 'string' && finalValue.trim() === '') {
-            setErrorMsg('Field cannot be empty! ⚠️'); // מדליקים את השגיאה
+            setErrorMsg('Field cannot be empty! ⚠️'); 
             
-            // מחכים 2 שניות, ואז מעלימים את השגיאה וחוזרים למצב הרגיל
+            // הסרת הודעת השגיאה ויציאה ממצב עריכה לאחר 2 שניות
             setTimeout(() => {
                 setErrorMsg('');
                 setEditingColumnId(null);
             }, 2000);
             
-            return; // עוצרים את פונקציית השמירה כאן
+            return; // עצירת תהליך השמירה
         }
 
+        // הפעלת פונקציית העדכון של קומפוננטת האב רק אם הערך אכן השתנה
         if (finalValue !== row[columnId]) {
             onUpdateRow(row.id, columnId, finalValue);
         }
@@ -52,6 +54,7 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
         if (e.key === 'Enter') handleSave(columnId);
     };
 
+    // --- 3. רינדור (Render) ---
     return (
         <tr>
             {columns.map((column) => {
@@ -59,11 +62,12 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
                 const isEditing = editingColumnId === column.id;
                 const isNonEditable = column.editable === false || column.type === 'boolean';
                 
-                // האם יש שגיאה ספציפית בעמודה הזו כרגע?
+                // בדיקה האם קיימת שגיאה ספציפית בעמודה הנוכחית
                 const hasError = isEditing && errorMsg !== '';
 
                 let displayContent;
                 
+                // רינדור מותנה לפי סוג העמודה ומצב העריכה
                 if (column.type === 'boolean') {
                     displayContent = (
                         <span className="favorite-star" onClick={() => onUpdateRow(row.id, column.id, !cellValue)}>
@@ -83,7 +87,8 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
                                 }}
                                 onBlur={() => setEditingColumnId(null)}
                                 className="edit-input"
-                                disabled={hasError} // חוסם את השדה כשיש שגיאה
+                                disabled={hasError} // חסימת השדה בעת הצגת שגיאה
+                                name={column.id} 
                             >
                                 {column.options?.map(option => (
                                     <option key={option} value={option}>{option}</option>
@@ -101,15 +106,16 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
                                     onBlur={() => handleSave(column.id)}
                                     onKeyDown={(e) => handleKeyDown(e, column.id)}
                                     className={`edit-input ${hasError ? 'error-border' : ''}`}
-                                    disabled={hasError} // חוסם הקלדה בזמן השגיאה
+                                    disabled={hasError} // חסימת הקלדה בעת שגיאה
+                                    name={column.id} // מניעת הערות נגישות בקונסול
                                 />
-                                {/* --- 3. הודעת הפופ-אפ האדומה --- */}
                                 {hasError && <span className="cell-error-msg">{errorMsg}</span>}
                             </div>
                         );
                     }
                 } 
                 else {
+                    // הפעלת פונקציית עיצוב (Format) אם קיימת בסכמה, אחרת הצגת הערך הגולמי
                     displayContent = column.format ? column.format(cellValue) : cellValue;
                 }
 
@@ -134,4 +140,5 @@ TableRow.propTypes = {
     onUpdateRow: PropTypes.func.isRequired
 };
 
+// שימוש ב-React.memo לאופטימיזציית רינדורים: השורה תרונדר מחדש רק אם ה-Props שלה ישתנו
 export default React.memo(TableRow);

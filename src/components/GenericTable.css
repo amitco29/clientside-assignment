@@ -1,63 +1,21 @@
-/* המעטפת של הטבלה בלבד */
-.table-container {
-    width: 100%;
-    overflow-x: auto; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    margin-top: 20px;
-    direction: ltr; 
-}
-
-.generic-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
-}
-
-.generic-table th {
-    background-color: #f4f4f4;
-    color: #333;
-    font-weight: bold;
-    text-align: center;
-    padding: 12px 15px;
-    border-bottom: 2px solid #ddd;
-}
-
-.generic-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #ddd;
-    color: #555;
-}
-
-.generic-table tbody tr:hover {
-    background-color: #f9f9f9;
-}
-
-.no-data {
-    text-align: center;
-    padding: 20px;
-    font-size: 1.2rem;
-    color: #777;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-}
-
-/* pagination */
+/* 1. המעטפת הכללית (Main Wrapper) */
+/* המחלקה הזו עוטפת את כל הקומפוננטה - גם את הפגינציה וגם את הטבלה עצמה */
 .table-wrapper {
     display: flex;
     flex-direction: column;
 }
 
-/* --- העיצוב החדש לפגינציה למעלה --- */
+/* 2. אזור סרגל הניווט והפגינציה (Top Navigation & Pagination) */
+/* סרגל הכלים העליון שמחזיק את הטקסט וכפתורי הניווט - מיושר לצד ימין */
 .table-top-bar {
     display: flex;
-    justify-content: flex-end; /* מצמיד את זה לצד ימין */
+    justify-content: flex-end; 
     align-items: center;
-    margin-bottom: 12px; /* רווח נעים בין הכפתורים לטבלה */
+    margin-bottom: 12px; 
     gap: 15px;
 }
 
+/* טקסט המידע של העמוד הנוכחי */
 .page-info-text {
     font-size: 0.9rem;
     color: #64748b;
@@ -67,17 +25,17 @@
     color: #1e293b;
 }
 
-/* מעטפת ה"גלולה" שמחזיקה את שני הכפתורים */
+/* מעטפת צורת ה"גלולה" שמאגדת את שני כפתורי החצים (Pill Container) */
 .pagination-pill {
     display: inline-flex;
     background-color: #ffffff;
     border: 1px solid #cbd5e1;
-    border-radius: 50px; /* עושה צורה עגולה בקצוות (Pill) */
+    border-radius: 50px; 
     overflow: hidden;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-/* הכפתורים עצמם */
+/* כפתורי מעבר לעמוד הבא/הקודם */
 .page-nav-btn {
     background: transparent;
     border: none;
@@ -91,25 +49,74 @@
     justify-content: center;
 }
 
-/* אפקט בריחוף עכבר */
 .page-nav-btn:hover:not(:disabled) {
     background-color: #f1f5f9;
-    color: #aa3bff; /* צובע את החץ בסגול שלנו */
+    color: #aa3bff; 
 }
 
-/* אפקט לחיצה */
 .page-nav-btn:active:not(:disabled) {
     background-color: #e2e8f0;
 }
 
-/* מצב כבוי (למשל כשנמצאים בעמוד הראשון ואי אפשר לחזור אחורה) */
+/* מצב "כבוי" של הכפתור (לדוגמה, חץ אחורה בעמוד 1) */
 .page-nav-btn:disabled {
     opacity: 0.3;
     cursor: not-allowed;
 }
 
-/* הקו שמפריד בין החצים */
+/* הקו הוויזואלי המפריד בין שני החצים בתוך הגלולה */
 .page-divider {
     width: 1px;
     background-color: #cbd5e1;
+}
+
+/* 3. עיצוב הטבלה (Table Structure & Design) */
+/* מעטפת הטבלה - אחראית על הגלילה האופקית במסכים צרים וההצללה (Shadow) */
+.table-container {
+    width: 100%;
+    overflow-x: auto; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    direction: ltr; 
+}
+
+/* אלמנט הטבלה הראשי */
+.generic-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+}
+
+/* כותרות העמודות (Table Headers) */
+.generic-table th {
+    background-color: #f4f4f4;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px 15px;
+    border-bottom: 2px solid #ddd;
+}
+
+/* תאי הטבלה הרגילים (Table Data Cells) */
+.generic-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    color: #555;
+}
+
+/* אפקט הארה בשורת טבלה במעבר עכבר */
+.generic-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* 4. מצבים ריקים (Empty States) */
+/* מיושם כאשר מערך הנתונים ריק (למשל, כאשר שום תוצאה לא חזרה מהסינון) */
+.no-data {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2rem;
+    color: #777;
+    background-color: #f9f9f9;
+    border-radius: 8px;
 }

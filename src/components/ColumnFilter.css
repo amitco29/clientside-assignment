@@ -1,3 +1,4 @@
+/* 1. מעטפת רכיב הסינון (Main Container) */
 .column-filter-container {
     background-color: #f8fafc;
     padding: 12px 20px;
@@ -9,7 +10,7 @@
     border: 1px solid #e2e8f0;
 }
 
-/* --- 1. עיצוב התפריט הנפתח (Dropdown) --- */
+/* 2. תפריט בחירת העמודות הנפתח (Dropdown Menu) */
 .dropdown-container {
     position: relative;
 }
@@ -33,7 +34,7 @@
 
 .dropdown-menu {
     position: absolute;
-    top: 115%; /* יורד מתחת לכפתור */
+    top: 115%; 
     left: 0;
     background-color: white;
     border: 1px solid #e2e8f0;
@@ -74,7 +75,7 @@
     background-color: #f1f5f9;
 }
 
-/* --- 2. עיצוב כפתור הסינון המפוצל (Segmented Control) --- */
+/* 3. כפתור סינון מפוצל (Segmented Control) */
 .segmented-control {
     display: flex;
     background-color: #e2e8f0;
@@ -95,19 +96,20 @@
     transition: all 0.2s ease;
 }
 
-/* הכפתור הלחוץ מתוך השניים */
+/* המחלקה שמופעלת על הכפתור הפעיל מתוך השניים */
 .segment-btn.active {
     background-color: white;
     color: #1e293b;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* --- 3. עיצוב כפתור השמירה (Save Button) --- */
+/* 4. אזור כפתור השמירה וההודעות (Save Action Area) */
+/* שימוש ב-position: relative כדי למקם את הודעת השמירה ביחס לכפתור זה בלבד */
 .save-action-area {
-    position: relative; /* חשוב מאוד: מאפשר למקם את ההודעה ביחס לכפתור */
+    position: relative; 
     display: flex;
     flex-direction: column;
-    align-items: center; /* ממרכז את ההודעה מתחת לכפתור */
+    align-items: center; 
 }
 
 .save-btn {
@@ -138,19 +140,19 @@
     box-shadow: none;
 }
 
-/* --- ההודעה הירוקה מתחת לכפתור --- */
+/* ההודעה ("Changes Saved") שמופיעה מתחת לכפתור */
 .save-success-msg {
     position: absolute;
-    top: 100%; /* דוחף אותה בדיוק לתחתית הכפתור */
+    top: 100%; 
     color: #4f4f4f; 
-    font-size: 0.75rem; /* פונט קטן ועדין */
+    font-size: 0.75rem; 
     font-weight: bold;
-    white-space: nowrap; /* מונע שבירת שורות */
-    pointer-events: none; /* שהעכבר לא "יתקע" עליה */
+    white-space: nowrap; 
+    pointer-events: none; 
     animation: slideDownAndFade 2.5s ease-in-out forwards;
 }
 
-/* שאר האנימציות (כולל האנימציה המעודכנת שיורדת למטה במקום הצידה) */
+/* 5. אנימציות (Keyframes) */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-2px); }
     to { opacity: 1; transform: translateY(0); }

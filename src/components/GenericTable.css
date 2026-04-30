@@ -42,3 +42,74 @@
     background-color: #f9f9f9;
     border-radius: 8px;
 }
+
+/* pagination */
+.table-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- העיצוב החדש לפגינציה למעלה --- */
+.table-top-bar {
+    display: flex;
+    justify-content: flex-end; /* מצמיד את זה לצד ימין */
+    align-items: center;
+    margin-bottom: 12px; /* רווח נעים בין הכפתורים לטבלה */
+    gap: 15px;
+}
+
+.page-info-text {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.page-info-text strong {
+    color: #1e293b;
+}
+
+/* מעטפת ה"גלולה" שמחזיקה את שני הכפתורים */
+.pagination-pill {
+    display: inline-flex;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 50px; /* עושה צורה עגולה בקצוות (Pill) */
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* הכפתורים עצמם */
+.page-nav-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 20px;
+    font-size: 1.1rem;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* אפקט בריחוף עכבר */
+.page-nav-btn:hover:not(:disabled) {
+    background-color: #f1f5f9;
+    color: #aa3bff; /* צובע את החץ בסגול שלנו */
+}
+
+/* אפקט לחיצה */
+.page-nav-btn:active:not(:disabled) {
+    background-color: #e2e8f0;
+}
+
+/* מצב כבוי (למשל כשנמצאים בעמוד הראשון ואי אפשר לחזור אחורה) */
+.page-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* הקו שמפריד בין החצים */
+.page-divider {
+    width: 1px;
+    background-color: #cbd5e1;
+}

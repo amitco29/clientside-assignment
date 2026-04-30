@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { genreOptions } from '../data/mockData';
 import './TableRow.css';
 
 const TableRow = ({ row, columns, onUpdateRow }) => {
-    console.log(`Rendering row: ${row.id}`);
-
+    // --- הדפסה למעקב אחרי רינדורים (Performance Check) ---
+    // יעזור לך לוודא שרק השורה שנערכת מרונדרת מחדש, ולא כל הטבלה!
+    console.log(`[Render] TableRow: ${row.id}`);
+    
     const [editingColumnId, setEditingColumnId] = useState(null);
     const [tempEditValue, setTempEditValue] = useState('');
-
-    const formatDuration = (totalSeconds) => {
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    };
+    
+    // --- 1. סטייט חדש להודעת שגיאה מקומית ---
+    const [errorMsg, setErrorMsg] = useState('');
 
     const handleDoubleClick = (columnId, currentValue) => {
+        // מונע כניסה לעריכה אם אנחנו כרגע מציגים שגיאה
+        if (errorMsg) return; 
+        
         setEditingColumnId(columnId);
         setTempEditValue(currentValue);
     };
@@ -28,6 +29,19 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
             finalValue = Number(tempEditValue);
         }
 
+        // --- 2. ולידציה לשדה ריק ---
+        if (typeof finalValue === 'string' && finalValue.trim() === '') {
+            setErrorMsg('Field cannot be empty! ⚠️'); // מדליקים את השגיאה
+            
+            // מחכים 2 שניות, ואז מעלימים את השגיאה וחוזרים למצב הרגיל
+            setTimeout(() => {
+                setErrorMsg('');
+                setEditingColumnId(null);
+            }, 2000);
+            
+            return; // עוצרים את פונקציית השמירה כאן
+        }
+
         if (finalValue !== row[columnId]) {
             onUpdateRow(row.id, columnId, finalValue);
         }
@@ -35,9 +49,7 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
     };
 
     const handleKeyDown = (e, columnId) => {
-        if (e.key === 'Enter') {
-            handleSave(columnId);
-        }
+        if (e.key === 'Enter') handleSave(columnId);
     };
 
     return (
@@ -45,65 +57,60 @@ const TableRow = ({ row, columns, onUpdateRow }) => {
             {columns.map((column) => {
                 const cellValue = row[column.id];
                 const isEditing = editingColumnId === column.id;
+                const isNonEditable = column.editable === false || column.type === 'boolean';
                 
-                const isNonEditable = column.type === 'boolean' || column.id === 'duration';
+                // האם יש שגיאה ספציפית בעמודה הזו כרגע?
+                const hasError = isEditing && errorMsg !== '';
 
                 let displayContent;
                 
                 if (column.type === 'boolean') {
                     displayContent = (
-                        <span 
-                            className="favorite-star"
-                            onClick={() => onUpdateRow(row.id, column.id, !cellValue)}
-                        >
+                        <span className="favorite-star" onClick={() => onUpdateRow(row.id, column.id, !cellValue)}>
                             {cellValue ? '⭐' : '☆'}
                         </span>
                     );
                 } 
-                else if (column.id === 'duration') {
-                    displayContent = formatDuration(cellValue);
-                }
                 else if (isEditing) {
-                    if (column.id === 'genre') {
-                        // --- השינוי שלנו כאן: שמירה וסגירה מיידית ---
+                    if (column.type === 'selection') {
                         displayContent = (
                             <select 
                                 autoFocus
                                 value={tempEditValue}
                                 onChange={(e) => {
-                                    const selectedValue = e.target.value;
-                                    // 1. בודקים אם יש שינוי, ואם כן שומרים ישירות
-                                    if (selectedValue !== row[column.id]) {
-                                        onUpdateRow(row.id, column.id, selectedValue);
-                                    }
-                                    // 2. סוגרים את מצב העריכה באותו רגע!
+                                    onUpdateRow(row.id, column.id, e.target.value);
                                     setEditingColumnId(null);
                                 }}
-                                // גיבוי: למקרה שהמשתמש פתח את הרשימה אבל לחץ בחוץ בלי לבחור כלום
                                 onBlur={() => setEditingColumnId(null)}
                                 className="edit-input"
+                                disabled={hasError} // חוסם את השדה כשיש שגיאה
                             >
-                                {genreOptions.map(option => (
+                                {column.options?.map(option => (
                                     <option key={option} value={option}>{option}</option>
                                 ))}
                             </select>
                         );
                     } else {
                         displayContent = (
-                            <input 
-                                type={column.type === 'number' ? 'number' : 'text'}
-                                autoFocus
-                                value={tempEditValue}
-                                onChange={(e) => setTempEditValue(e.target.value)}
-                                onBlur={() => handleSave(column.id)}
-                                onKeyDown={(e) => handleKeyDown(e, column.id)}
-                                className="edit-input"
-                            />
+                            <div className="input-wrapper">
+                                <input 
+                                    type={column.type === 'number' ? 'number' : 'text'}
+                                    autoFocus
+                                    value={tempEditValue}
+                                    onChange={(e) => setTempEditValue(e.target.value)}
+                                    onBlur={() => handleSave(column.id)}
+                                    onKeyDown={(e) => handleKeyDown(e, column.id)}
+                                    className={`edit-input ${hasError ? 'error-border' : ''}`}
+                                    disabled={hasError} // חוסם הקלדה בזמן השגיאה
+                                />
+                                {/* --- 3. הודעת הפופ-אפ האדומה --- */}
+                                {hasError && <span className="cell-error-msg">{errorMsg}</span>}
+                            </div>
                         );
                     }
                 } 
                 else {
-                    displayContent = cellValue;
+                    displayContent = column.format ? column.format(cellValue) : cellValue;
                 }
 
                 return (

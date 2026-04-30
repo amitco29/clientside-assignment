@@ -35,3 +35,50 @@
 .favorite-star:hover {
     transform: scale(1.3); 
 }
+
+/* עוטף את האינפוט כדי שנוכל למקם את השגיאה מעליו */
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* מסגרת אדומה לאינפוט כשיש שגיאה */
+.edit-input.error-border {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+}
+
+/* הודעת השגיאה הקופצת */
+.cell-error-msg {
+    position: absolute;
+    bottom: 110%; /* ממקם את זה מעל האינפוט */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ef4444;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+    animation: popIn 0.2s ease-out;
+    z-index: 10;
+}
+
+/* משולש קטן בתחתית ההודעה (כמו בועת דיבור) */
+.cell-error-msg::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #ef4444 transparent transparent transparent;
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: translate(-50%, 5px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}

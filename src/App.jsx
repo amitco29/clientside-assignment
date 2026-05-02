@@ -103,7 +103,7 @@ function App() {
   };
 
 
-  // --- 4. לב האפליקציה: פונקציית העדכון (Update Logic) ---
+  // --- 4.  פונקציית העדכון (Update Logic) ---
   
   // שימוש ב-useCallback כדי שה-React.memo ב-TableRow לא ירנדר שורות סתם.
   const handleUpdateRow = useCallback((rowId, columnId, newValue) => {
